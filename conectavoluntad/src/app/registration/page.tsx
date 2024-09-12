@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import Link from 'next/link';
 import Header from '../components/Header';
@@ -56,7 +55,6 @@ const SignUp = () => {
   return (
     <>
       <Header />
-
       <div className="login-container">
         <form onSubmit={handleSubmit} className="login-form">
           <div className="flex justify-center mb-3">

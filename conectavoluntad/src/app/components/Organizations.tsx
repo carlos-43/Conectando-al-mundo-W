@@ -1,3 +1,4 @@
+import Link from 'next/link';
 const organizations = [
     { name: "Organización 1", description: "Descripción organización" },
     { name: "Organización 2", description: "Descripción organización" },
@@ -11,9 +12,11 @@ const organizations = [
     return (
       <section className="bg-gray-100 p-8">
         <div className="flex justify-between items-center mb-4">
+          <Link href="/Organizations">
           <button className="bg-[#46B6A5] text-white px-4 py-2 rounded-lg">
             + New Organization
           </button>
+          </Link>
           <input
             type="text"
             placeholder="Buscar Organización"
