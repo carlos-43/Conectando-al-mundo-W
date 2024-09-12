@@ -1,4 +1,5 @@
 // pages/index.js
+import './globals.css';
 import Header from '@/app/components/Header';
 import About from '@/app/components/About';
 import Organizations from '@/app/components/Organizations';
