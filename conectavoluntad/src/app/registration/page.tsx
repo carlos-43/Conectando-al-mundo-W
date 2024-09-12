@@ -39,7 +39,7 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
-            className="form-input text-teal-500"
+            className="form-input"
             required
           />
 
@@ -53,14 +53,15 @@ export default function Login() {
           />
 
           <button type="submit" className="form-button">Log In</button>
-          <div className="flex justify-between mt-4 text-sm">
-          <a href="#" className="text-teal-500 hover:underline">
-            ¿Olvidaste tu contraseña?
-          </a>
-            <Link href="/registration" className="text-teal-500 hover:underline">
-              Registrarse
+
+          <p className="login-text">Olvide mi contraseña</p>
+
+          <p className="login-text">
+            No tienes cuenta?{" "}
+            <Link href="/registration" className="form-link">
+              Registrarme
             </Link>
-            </div>
+          </p>
         </form>
       </div>
     </>
