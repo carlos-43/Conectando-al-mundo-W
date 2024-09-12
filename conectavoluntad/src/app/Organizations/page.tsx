@@ -86,7 +86,7 @@ export default function Page() {
               name="descripcion"
               value={formData.descripcion}
               onChange={handleChange}
-              className="w-full p-3 bg-gray-700 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 bg-gray-800 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows={4}
               placeholder="Escribe una descripción detallada aquí..."
             ></textarea>

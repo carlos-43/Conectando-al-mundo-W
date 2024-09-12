@@ -5,7 +5,7 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-gray-900 h-screen p-5 fixed lg:w-64 sm:w-full transition-all duration-300">
       <nav>
-        <ul className="space-y-4">
+        <ul className="space-y-4 m-1">
         <Link href="/">
           <li>
             <a href="#" className="flex items-center p-2 text-white hover:bg-gray-700 rounded transition-all duration-300">
@@ -20,7 +20,7 @@ export default function Sidebar() {
             </a>
           </li>
           </Link>
-          <Link href="/Organizations">
+          <Link href="/cuenta">
           <li>
             <a href="#" className="flex items-center p-2 text-white hover:bg-gray-700 rounded transition-all duration-300">
               <FaUserAlt className="mr-2" /> Mi cuenta
