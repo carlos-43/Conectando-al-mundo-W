@@ -1,20 +1,41 @@
-"use client"; // Add this to indicate the component is a Client Component
+"use client"; // Indica que es un componente de cliente
 
-import Link from 'next/link'; // Import Link from Next.js for navigation
-import Header from '../components/Header'; // Import Header
+import React, { useState } from "react";
+import Link from 'next/link'; // Importa Link de Next.js para navegación
+import Header from '../components/Header'; // Importa Header
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
-import Logo from '@/multimedia/logo.png'
+import Logo from '@/multimedia/logo.png';
 
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    console.log({ email, password });
-    // Perform your login logic here, e.g., sending data to the API
+    console.log(email, password);
+
+    fetch("http://localhost:3000/login-user", {
+      method: "POST",
+      crossDomain: true,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, "userRegister");
+        if (data.status === "ok") {
+          alert("Login exitoso");
+          window.localStorage.setItem("token", data.data);
+          window.location.href = "./userDetails";
+        }
+      });
   };
 
   return (
@@ -22,48 +43,66 @@ export default function Login() {
       {/* Header */}
       <Header />
 
-      {/* Login Form */}
+      {/* Formulario de Inicio de Sesión */}
       <div className="login-container">
         <form onSubmit={handleSubmit} className="login-form">
-        <div className="flex justify-center mb-3">
-          <Image
-            src={Logo} // Reemplaza con el logo real
-            alt="Logo"
-            className="w-24"
-          />
-        </div>
+          <div className="flex justify-center mb-3">
+            <Image
+              src={Logo} // Reemplaza con el logo real
+              alt="Logo"
+              className="w-24"
+            />
+          </div>
           <h2 className="form-title">Conecta Voluntad</h2>
-          <text className="form-link">Login</text>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            className="form-input text-teal-500"
-            required
-          />
+          <p className="form-link">Login</p>
 
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            className="form-input"
-            required
-          />
+          <div className="mb-3">
+            <input
+              type="email"
+              className="form-input text-teal-500"
+              placeholder="Ingresa email"
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-          <button type="submit" className="form-button">Log In</button>
+          <div className="mb-3">
+            <input
+              type="password"
+              className="form-input"
+              placeholder="Ingresa Contraseña"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="custom-control custom-checkbox mb-3">
+            <input
+              type="checkbox"
+              className="custom-control-input"
+              id="customCheck1"
+            />
+            <label className="custom-control-label" htmlFor="customCheck1">
+              Recuérdame
+            </label>
+          </div>
+
+          <div className="d-grid">
+            <button type="submit" className="form-button">Log In</button>
+          </div>
+
           <div className="flex justify-between mt-4 text-sm">
-          <a href="#" className="text-teal-500 hover:underline">
-            ¿Olvidaste tu contraseña?
-          </a>
+            <Link href="#" className="text-teal-500 hover:underline">
+              ¿Olvidaste tu contraseña?
+            </Link>
             <Link href="/registration" className="text-teal-500 hover:underline">
               Registrarse
             </Link>
-            </div>
+          </div>
         </form>
       </div>
     </>
   );
-}
+};
 
+export default Login;

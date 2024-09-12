@@ -1,79 +1,89 @@
-"use client"; // Add this to indicate the component is a Client Component
+"use client";
 
-import Link from 'next/link'; // Import Link from Next.js for navigation
-import Header from '../components/Header'; // Import Header
+import React, { useState } from "react";
+import Link from 'next/link';
+import Header from '../components/Header';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
-import Logo from '@/multimedia/logo.png'
+import Logo from '@/multimedia/logo.png';
 
-
-export default function Registration() {
+const SignUp = () => {
   const [formData, setFormData] = useState({
-    nombre: '',
-    apellidoPaterno: '',
-    apellidoMaterno: '',
-    email: '',
-    password: '',
+    fname: "",
+    lname: "",
+    mname: "",
+    email: "",
+    password: "",
     termsAccepted: false,
   });
 
-  // Handle input changes
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  // Handle checkbox change for terms
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      termsAccepted: e.target.checked,
-    }));
-  };
-
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
-    // Perform the registration logic here (e.g., send data to API)
+    const { fname, lname, mname, email, password, termsAccepted } = formData;
+    if (!termsAccepted) {
+      alert("Por favor acepta los términos y condiciones.");
+      return;
+    }
+
+    console.log(fname, lname, mname, email, password);
+    fetch("http://localhost:3000/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        fname,
+        lname,
+        mname,
+        email,
+        password,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, "userRegister");
+      });
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   return (
     <>
-      {/* Header */}
       <Header />
 
-      {/* Registration Form */}
       <div className="login-container">
         <form onSubmit={handleSubmit} className="login-form">
           <div className="flex justify-center mb-3">
             <Image
-              src={Logo} // Ensure the logo is in the public folder
+              src={Logo}
               alt="Logo"
               className="w-24"
             />
           </div>
-          <h2 className="form-title">ConectaVoluntad</h2>
+          <h2 className="form-title">Conecta Voluntad</h2>
           <text className="form-link">Registro</text>
 
           <div className="input-group">
             <input
               type="text"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleInputChange}
+              name="fname"
+              value={formData.fname}
+              onChange={handleChange}
               placeholder="Nombre"
               className="form-input"
               required
             />
             <input
               type="text"
-              name="apellidoPaterno"
-              value={formData.apellidoPaterno}
-              onChange={handleInputChange}
+              name="lname"
+              value={formData.lname}
+              onChange={handleChange}
               placeholder="Apellido Paterno"
               className="form-input"
               required
@@ -82,9 +92,9 @@ export default function Registration() {
 
           <input
             type="text"
-            name="apellidoMaterno"
-            value={formData.apellidoMaterno}
-            onChange={handleInputChange}
+            name="mname"
+            value={formData.mname}
+            onChange={handleChange}
             placeholder="Apellido Materno"
             className="form-input"
             required
@@ -94,8 +104,8 @@ export default function Registration() {
             type="email"
             name="email"
             value={formData.email}
-            onChange={handleInputChange}
-            placeholder="Email"
+            onChange={handleChange}
+            placeholder="Correo Electrónico"
             className="form-input"
             required
           />
@@ -104,8 +114,8 @@ export default function Registration() {
             type="password"
             name="password"
             value={formData.password}
-            onChange={handleInputChange}
-            placeholder="Password"
+            onChange={handleChange}
+            placeholder="Contraseña"
             className="form-input"
             required
           />
@@ -115,10 +125,10 @@ export default function Registration() {
               type="checkbox"
               name="termsAccepted"
               checked={formData.termsAccepted}
-              onChange={handleCheckboxChange}
+              onChange={handleChange}
               required
             />
-            <label>Acepto Terminos y Condiciones</label>
+            <label className="ml-2">Acepto Términos y Condiciones</label>
           </div>
 
           <button type="submit" className="form-button">Registrarse</button>
@@ -133,4 +143,6 @@ export default function Registration() {
       </div>
     </>
   );
-}
+};
+
+export default SignUp;
