@@ -1,3 +1,5 @@
+"use client"
+import React from "react";
 import { FaHome, FaUserAlt, FaInfo, FaFileAlt, FaMapMarkerAlt, FaUsers } from 'react-icons/fa';
 import Link from 'next/link';
 

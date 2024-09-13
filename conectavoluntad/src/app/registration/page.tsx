@@ -1,60 +1,54 @@
-"use client";
+"use client"
 import React, { useState } from "react";
-import Link from 'next/link';
-import Header from '../components/Header';
+import Header from "../components/Header";
 import Image from 'next/image';
 import Logo from '@/multimedia/logo.png';
+import Link from 'next/link';
 
-const SignUp = () => {
-  const [formData, setFormData] = useState({
-    fname: "",
-    lname: "",
-    mname: "",
-    email: "",
-    password: "",
-    termsAccepted: false,
-  });
+const SignUp: React.FC = () => {
+  const [fname, setFname] = useState<string>("");
+  const [lname, setLname] = useState<string>("");
+  const [mname, setMname] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { fname, lname, mname, email, password, termsAccepted } = formData;
-    if (!termsAccepted) {
-      alert("Por favor acepta los términos y condiciones.");
-      return;
-    }
-
     console.log(fname, lname, mname, email, password);
-    fetch("http://localhost:3000/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        fname,
-        lname,
-        mname,
-        email,
-        password,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data, "userRegister");
-      });
-  };
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    try {
+      const response = await fetch("http://localhost:3000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          fname,
+          lname,
+          mname,
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+      console.log(data, "userRegister");
+
+      if (data.status === "ok") {
+        alert("Registro exitoso");
+        window.location.href = "/login";
+      } else {
+        alert("Error en el registro");
+      }
+    } catch (error) {
+      console.error("Error during registration:", error);
+    }
   };
 
   return (
     <>
-      <Header />
+    <Header />
       <div className="login-container">
         <form onSubmit={handleSubmit} className="login-form">
           <div className="flex justify-center mb-3">
@@ -67,78 +61,78 @@ const SignUp = () => {
           <h2 className="form-title">Conecta Voluntad</h2>
           <text className="form-link">Registro</text>
 
-          <div className="input-group">
-            <input
-              type="text"
-              name="fname"
-              value={formData.fname}
-              onChange={handleChange}
-              placeholder="Nombre"
-              className="form-input"
-              required
-            />
-            <input
-              type="text"
-              name="lname"
-              value={formData.lname}
-              onChange={handleChange}
-              placeholder="Apellido Paterno"
-              className="form-input"
-              required
-            />
-          </div>
-
+        <div className="mb-4">
+          <label className="block text-gray-700">Nombre</label>
           <input
             type="text"
-            name="mname"
-            value={formData.mname}
-            onChange={handleChange}
-            placeholder="Apellido Materno"
-            className="form-input"
-            required
+            className="text-gray-700 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            placeholder="Nombre"
+            value={fname}
+            onChange={(e) => setFname(e.target.value)}
           />
+        </div>
 
+        <div className="mb-4">
+          <label className="block text-gray-700">Apellido Paterno</label>
+          <input
+            type="text"
+            className="text-gray-700 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            placeholder="Apellido Paterno"
+            value={lname}
+            onChange={(e) => setLname(e.target.value)}
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700">Apellido Materno</label>
+          <input
+            type="text"
+            className="text-gray-700 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            placeholder="Apellido Materno"
+            value={mname}
+            onChange={(e) => setMname(e.target.value)}
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700">Correo</label>
           <input
             type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Correo Electrónico"
-            className="form-input"
-            required
+            className="text-gray-700 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            placeholder="Ingresa email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
+        </div>
 
+        <div className="mb-4">
+          <label className="block text-gray-700">Contraseña</label>
           <input
             type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Contraseña"
-            className="form-input"
-            required
+            className="text-gray-700 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+            placeholder="Ingresa Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
+        </div>
 
-          <div className="terms-container">
-            <input
-              type="checkbox"
-              name="termsAccepted"
-              checked={formData.termsAccepted}
-              onChange={handleChange}
-              required
-            />
-            <label className="ml-2">Acepto Términos y Condiciones</label>
-          </div>
+        <div className="mb-4">
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+          >
+            Registrarse
+          </button>
+        </div>
 
-          <button type="submit" className="form-button">Registrarse</button>
-
-          <div className="flex justify-between mt-4 text-sm">
+        <div className="flex justify-between mt-4 text-sm">
             <p>¿Ya tienes una cuenta?</p>
             <Link href="/login" className="text-teal-500 hover:underline">
               Iniciar sesión
             </Link>
           </div>
-        </form>
-      </div>
+      </form>
+    </div>
     </>
   );
 };

@@ -1,45 +1,66 @@
 "use client";
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState} from "react";
 import Header from "../components/Header";
 import Side from "../components/Sidebar";
 
-export default function Page() {
-  const [formData, setFormData] = useState({
-    organizationName: "",
-    descripcion: "",
-    phone: "",
-    email: "",
-    website: "",
-    volunteers: "",
-    employees: "",
-    income: "",
-    yearFounded: "",
-    facebook: "",
-    instagram: "",
-    twitter: "",
-    youtube: "",
-    tiktok: "",
-    linkedin: "",
-    image: null,
-  });
+const RegisterOrganization: React.FC = () => {
+  const [organizationName, setOrganizationName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [location, setLocation] = useState<string>("");
+  const [phone, setPhone] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [website, setWebsite] = useState<string>("");
+  const [volunteers, setVolunteers] = useState<string>("");
+  const [yearFounded, setYearFounded] = useState<string>("");
+  const [facebook, setFacebook] = useState<string>("");
+  const [twitter, setTwitter] = useState<string>("");
 
-  const [imagePreview, setImagePreview] = useState<string | null>(null); // Para la vista previa de la imagen
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, files } = e.target as HTMLInputElement;
-    
-    if (name === 'image' && files && files.length > 0) {
-      const file = files[0];
-      setFormData({ ...formData, [name]: file });
-      setImagePreview(URL.createObjectURL(file)); // Genera la vista previa de la imagen
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
-
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
+  
+    try {
+      const response = await fetch("http://localhost:3000/crear-organizacion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          name: organizationName,
+          description: description,
+          location: location,
+          Tel: phone,
+          email: email,
+          Web: website,
+          voluntarios: volunteers,
+          date: yearFounded,
+          face: facebook,
+          xtwitter: twitter,
+        }),
+      });
+  
+      if (!response.ok) {
+        // Si el servidor devuelve un error (4xx o 5xx)
+        throw new Error(`Error en la respuesta del servidor: ${response.statusText}`);
+      }
+  
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const data = await response.json();
+        console.log(data, "organizationRegister");
+  
+        if (data.status === "ok") {
+          alert("Organización registrada exitosamente");
+        } else {
+          alert("Error en el registro: " + data.error);
+        }
+      } else {
+        throw new Error("El servidor no devolvió un JSON");
+      }
+    } catch (error) {
+      console.error("Error al registrar la organización:", error);
+      alert("Ocurrió un error al registrar la organización");
+    }
   };
 
   return (
@@ -59,8 +80,8 @@ export default function Page() {
             <input
               type="text"
               name="organizationName"
-              value={formData.organizationName}
-              onChange={handleChange}
+              value={organizationName}
+              onChange={(e) => setOrganizationName(e.target.value)}
               className="p-2 bg-gray-800 rounded w-full"
             />
           </div>
@@ -71,8 +92,20 @@ export default function Page() {
             <input
               type="text"
               name="yearFounded"
-              value={formData.yearFounded}
-              onChange={handleChange}
+              value={yearFounded}
+              onChange={(e) => setYearFounded(e.target.value)}
+              className="p-2 bg-gray-800 rounded w-full"
+            />
+          </div>
+
+          {/* Ubicacion de fundacion */}
+          <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <label className="block mb-2">Ubicacion de organización *</label>
+            <input
+              type="text"
+              name="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
               className="p-2 bg-gray-800 rounded w-full"
             />
           </div>
@@ -83,34 +116,14 @@ export default function Page() {
               Descripción de la organización
             </label>
             <textarea
-              name="descripcion"
-              value={formData.descripcion}
-              onChange={handleChange}
+              name="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               className="w-full p-3 bg-gray-800 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows={4}
               placeholder="Escribe una descripción detallada aquí..."
             ></textarea>
           </div>
-
-          {/* Imagen PNG */}
-          <div className="mb-4">
-            <label className="block mb-2 text-gray-300">Subir imagen (solo PNG)</label>
-            <input
-              type="file"
-              name="image"
-              accept="image/png"
-              onChange={handleChange}
-              className="w-full p-2 bg-gray-800 rounded text-white"
-            />
-          </div>
-
-          {/* Vista previa de la imagen cargada */}
-          {imagePreview && (
-            <div className="mb-4">
-              <label className="block mb-2 text-gray-300">Vista previa de la imagen</label>
-              <img src={imagePreview} alt="Vista previa de la imagen" className="w-32 h-32 object-cover rounded" />
-            </div>
-          )}
 
           {/* Teléfono de contacto */}
           <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -118,8 +131,8 @@ export default function Page() {
             <input
               type="text"
               name="phone"
-              value={formData.phone}
-              onChange={handleChange}
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
               className="p-2 bg-gray-800 rounded w-full"
             />
           </div>
@@ -130,8 +143,8 @@ export default function Page() {
             <input
               type="email"
               name="email"
-              value={formData.email}
-              onChange={handleChange}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="p-2 bg-gray-800 rounded w-full"
             />
           </div>
@@ -142,8 +155,8 @@ export default function Page() {
             <input
               type="text"
               name="website"
-              value={formData.website}
-              onChange={handleChange}
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
               className="p-2 bg-gray-800 rounded w-full"
             />
           </div>
@@ -155,8 +168,8 @@ export default function Page() {
             </label>
             <select
               name="volunteers"
-              value={formData.volunteers}
-              onChange={handleChange}
+              value={volunteers}
+              onChange={(e) => setVolunteers(e.target.value)}
               className="w-full p-2 bg-gray-800 rounded"
             >
               <option>1 a 10</option>
@@ -177,20 +190,8 @@ export default function Page() {
               <input
                 type="text"
                 name="facebook"
-                value={formData.facebook}
-                onChange={handleChange}
-                className="w-full p-2 bg-gray-800 rounded"
-              />
-            </div>
-
-            {/* Instagram */}
-            <div className="mb-4">
-              <label className="block mb-2">Instagram</label>
-              <input
-                type="text"
-                name="instagram"
-                value={formData.instagram}
-                onChange={handleChange}
+                value={facebook}
+                onChange={(e) => setFacebook(e.target.value)}
                 className="w-full p-2 bg-gray-800 rounded"
               />
             </div>
@@ -201,54 +202,21 @@ export default function Page() {
               <input
                 type="text"
                 name="twitter"
-                value={formData.twitter}
-                onChange={handleChange}
-                className="w-full p-2 bg-gray-800 rounded"
-              />
-            </div>
-
-            {/* YouTube */}
-            <div className="mb-4">
-              <label className="block mb-2">YouTube</label>
-              <input
-                type="text"
-                name="youtube"
-                value={formData.youtube}
-                onChange={handleChange}
-                className="w-full p-2 bg-gray-800 rounded"
-              />
-            </div>
-
-            {/* TikTok */}
-            <div className="mb-4">
-              <label className="block mb-2">TikTok</label>
-              <input
-                type="text"
-                name="tiktok"
-                value={formData.tiktok}
-                onChange={handleChange}
-                className="w-full p-2 bg-gray-800 rounded"
-              />
-            </div>
-
-            {/* LinkedIn */}
-            <div className="mb-4">
-              <label className="block mb-2">LinkedIn</label>
-              <input
-                type="text"
-                name="linkedin"
-                value={formData.linkedin}
-                onChange={handleChange}
+                value={twitter}
+                onChange={(e) => setTwitter(e.target.value)}
                 className="w-full p-2 bg-gray-800 rounded"
               />
             </div>
           </div>
 
-          <button type="submit" className="w-full p-3 bg-blue-600 rounded mt-4">
+          <button type="submit" 
+          className="w-full p-3 bg-blue-600 rounded mt-4">
             Guardar
           </button>
         </form>
       </div>
     </>
   );
-}
+};
+
+export default RegisterOrganization;
